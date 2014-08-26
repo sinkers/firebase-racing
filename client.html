@@ -7,15 +7,32 @@
         </div>
 
 <script>
+/**
+Things that need to be done here
+Do a small flash whenever an entry updates
+Format the output in a table
+Provide a small image next
+*/
+
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key.laptime_unix]; var y = b[key.laptime_unix];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
+
     var myFirebaseRef = new Firebase("https://sportstest2.firebaseio.com/");
     myFirebaseRef.child("car").on("value", function(snapshot) {
         console.log(snapshot.val());  // Alerts "San Francisco"
         myHtml = "";
-        $.each(snapshot.val(), function (key,val) {
+        cars = snapshot.val(); //sortByKey(snapshot.val(),'data');
+        $.each(cars, function (key,val) {
              console.log(key);
-             console.log(val.speed.speed);
-             myHtml += "<div id='" + key + "'>" + key + " : " + val.speed.speed + "</div>"
-            console.log(myHtml)
+             console.log(val.data.speed);
+             console.log(val.data.laptime);
+             console.log(val.data.lap);
+             myHtml += "<div id='" + key + "'>" + key + " speed: " + val.data.speed + " lap:" + val.data.lap + " laptime:" + val.data.laptime + "</div>"
+            //console.log(myHtml)
 
         });
         $("#results").empty().html(myHtml);
