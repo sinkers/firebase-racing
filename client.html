@@ -1,0 +1,24 @@
+<script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <div>Car racing results</div>
+        <div id="results">
+
+
+        </div>
+
+<script>
+    var myFirebaseRef = new Firebase("https://sportstest2.firebaseio.com/");
+    myFirebaseRef.child("car").on("value", function(snapshot) {
+        console.log(snapshot.val());  // Alerts "San Francisco"
+        myHtml = "";
+        $.each(snapshot.val(), function (key,val) {
+             console.log(key);
+             console.log(val.speed.speed);
+             myHtml += "<div id='" + key + "'>" + key + " : " + val.speed.speed + "</div>"
+            console.log(myHtml)
+
+        });
+        $("#results").empty().html(myHtml);
+    });
+
+</script>
