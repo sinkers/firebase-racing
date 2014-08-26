@@ -66,6 +66,9 @@ while True:
             "image":car["image"]
 
         }
-        r = requests.put(fbapp + base + car["id"] + "/data.json", data=json.dumps(speed))
+        try:
+            r = requests.put(fbapp + base + car["id"] + "/data.json", data=json.dumps(speed), timeout=10)
+        except:
+            print "Error processing request"
         print r.text
     lap += 1
