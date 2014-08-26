@@ -1,10 +1,48 @@
 <script src="https://cdn.firebase.com/js/client/1.0.21/firebase.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="speedometer.css" media="screen" />
+
+        <script type="text/javascript" src="xcanvas.js"></script>
+        <script type="text/javascript" src="tbe.js"></script>
+
+        <script type="text/javascript" src="digitaldisplay.js"></script>
+        <script type="text/javascript" src="speedometer.js"></script>
+        <script type="text/javascript" src="themes/default.js"></script>
+<div id="speedometerold"></div>
+
         <div>Car racing results</div>
         <div id="results">
 
 
         </div>
+
+
+<script type="text/javascript" src="example.js"></script>
+        <script type="text/javascript" src="controls.js"></script>
+        <script type="text/javascript">
+          var speedometer;
+          // Explicit onready listener for modern browsers. If you use a JS framework,
+          // you should replace this code with your toolkit's "onReady" helpers (e.g.
+          // $(document).ready() on jQuery, Event.observe('dom:loaded') on prototype,
+          // and so on.
+          document.addEventListener ("DOMContentLoaded", function() {
+            document.removeEventListener ("DOMContentLoaded", arguments.callee, false);
+
+            // Check out configuration and API on GitHub Wiki:
+            // http://wiki.github.com/vjt/canvas-speedometer
+            speedometer = new Speedometer ('speedometer', {theme: 'default'});
+            speedometer.draw ();
+            speedometer.addEventListener ('speedometer:animateend', function () {
+              controls.start ();
+            });
+
+            var controls = new Controls ();
+            controls.start ();
+          }, false);
+        </script>
+
+
 
 <script>
 /**
@@ -20,31 +58,46 @@ Provide a small image next
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         });
     }
-
+    var speedos = [];
     var myFirebaseRef = new Firebase("https://sportstest2.firebaseio.com/");
     myFirebaseRef.child("car").on("value", function(snapshot) {
         console.log(snapshot.val());  // Alerts "San Francisco"
         myHtml = "";
         cars = snapshot.val();
+        count = 0;
         $.each(cars, function (key,val) {
             try {
                 console.log(val);
                  console.log(val.data.speed);
                  console.log(val.data.laptime);
                  console.log(val.data.lap);
+                 myHtml += "<div class='speedometer speedometer" + key + "' id='speedometer" + key + "'></div>";
                  myHtml += "<div id='" + key + "'>";
                  myHtml += "<img src='" + val.data.image + "' width='100'>";
-                 myHtml += val.data.driver + " speed: ";
+                 myHtml += val.data.driver;
                  myHtml += val.data.speed + " lap:" + val.data.lap + " laptime:" + val.data.laptime + "</div>";
+
+                 if (speedos[count] == null) {
+                    speedos[count] = new Speedometer('speedometer'+key, {theme: 'default', min:60, max:280});
+                 }
+                 speedos[count].update(val.data.speed);
+                 speedos[count].draw();
+                 console.log(speedos);
                 //console.log(myHtml);
             }
             catch (e){
-                console.log("Exception");
+                console.log("Exception " + e + " key" + key);
             }
-
+            count ++;
 
         });
         $("#results").empty().html(myHtml);
+        var arrayLength = speedos.length;
+        console.log[speedos];
+        for (var i = 0; i < arrayLength; i++) {
+            //console.log(speedos[i]);
+            //speedos[i].draw();
+        }
     });
 
 </script>
